@@ -1,6 +1,8 @@
-def fname():
-    return 1, 2
-
-fname = fname()
-x, y = fname[0], fname[1]
-print(x,y)
+list = [
+    [1,2],
+    [3,4]
+]
+ary = [-1, -1]
+print(list)
+x = list[0].insert(0, ary)
+print(x)
