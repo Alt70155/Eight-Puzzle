@@ -11,9 +11,10 @@ def create_screen(list, flame):
     for i in range(0,3):
         for j in range(0,3):
             # それぞれのタイルを生成
-            label = tk.Label(flame, text = list[i][j])
+            img = tk.PhotoImage(file = './img/{0}.png'.format(list[i][j]))
+            label = tk.Label(flame, text = list[i][j], image = img)
             label.bind('<1>', judge) # judge関数を登録
-            label.grid(column = ct % 3, row = ct // 3, padx = 30, pady = 30)
+            label.grid(column = ct % 3, row = ct // 3)
             ct+=1
 
 # タイルが押されるとこの関数が実行される
@@ -56,15 +57,15 @@ def close():
 # 状態管理用配列作成
 first_list   = [0 if i == 9 else i for i in range(1,10)]
 correct_list = split_list(first_list, 3) # 3分割
-random_list  = split_list(random.sample(first_list, len(first_list)), 3)
-# random_list  = split_list([1,2,3,4,5,6,7,0,8],3)
+# random_list  = split_list(random.sample(first_list, len(first_list)), 3)
+random_list  = split_list([1,2,3,4,5,6,7,0,8],3)
 
 # ウィンドウ生成
 root = tk.Tk()
 root.title('8パズル')
 root.geometry('250x250')
 flame = tk.LabelFrame(root) # フレーム生成
-create_screen(random_list, flame) # フレームと配列を使ってスクリーンを生成
+create_screen(random_list, flame, image = img) # フレームと配列を使ってスクリーンを生成
 
-flame.pack(side = 'top')
+flame.pack(side = 'top', pady = 40)
 root.mainloop()

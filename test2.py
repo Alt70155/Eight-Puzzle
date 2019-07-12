@@ -1,7 +1,14 @@
-# def split_list(l, n):
-#     return [l[idx:idx + n] for idx in range(0, len(l), n)]
+import tkinter as tk
 
-split_list = lambda l, n: [l[idx:idx + n] for idx in range(0, len(l), n)]
-x = split_list([1,2,3,4,5,6,7,8,9], 3)
+def click(e):
+    print(e.widget['text'])
 
-print(x)
+root = tk.Tk()
+root.geometry('200x200')
+flm = tk.LabelFrame(root)
+
+img = tk.PhotoImage(file = './image/1.png')
+
+label = tk.Label(flame, text = 1, image = img)
+label.grid(column = 0, row = 0)
+label.bind('<1>', click)
