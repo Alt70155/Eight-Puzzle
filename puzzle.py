@@ -6,26 +6,30 @@ from tkinter import messagebox
 # rangeの第三引数はstep, nは0,3,9となり、idx:idx+nは0~3,3~6,6~9となる
 split_list = lambda l, n: [l[idx:idx + n] for idx in range(0, len(l), n)]
 
-def create_screen(list, flame):
+def create_screen(list, flame, img_name_list):
     ct = 0
     for i in range(0,3):
         for j in range(0,3):
-            # それぞれのタイルを生成
-            img = tk.PhotoImage(file = './img/{0}.png'.format(list[i][j]))
-            label = tk.Label(flame, text = list[i][j], image = img)
+            index = list[i][j]
+            label = tk.Label(flame, text = index, image = img_name_list[index])
             label.bind('<1>', judge) # judge関数を登録
-            label.grid(column = ct % 3, row = ct // 3)
-            ct+=1
+            label.grid(column = ct % 3, row = ct // 3, padx = 30, pady = 30)
+            ct += 1
 
 # タイルが押されるとこの関数が実行される
 def judge(e):
+    global hand_ct
+
     y, x = search_index(e.widget['text']) # クリックされた数字の座標を取得
 
     if is_exist_zero(y, x): # 選択された数字の上下左右にゼロがあるか調べる
+        hand_ct -= 1
+        hand_ct_label.configure(text='残り手数:\n' + str(hand_ct))
+
         zero_y, zero_x = search_index(0) # ゼロの座標を取得
         # ゼロと選択された数字を入れ替え
         random_list[y][x], random_list[zero_y][zero_x] = random_list[zero_y][zero_x], random_list[y][x]
-        create_screen(random_list, flame) # 表示更新
+        create_screen(random_list, flame, img_name_list) # 表示更新
         if random_list == correct_list:
             print('claer')
             close()
@@ -58,14 +62,27 @@ def close():
 first_list   = [0 if i == 9 else i for i in range(1,10)]
 correct_list = split_list(first_list, 3) # 3分割
 # random_list  = split_list(random.sample(first_list, len(first_list)), 3)
-random_list  = split_list([1,2,3,4,5,6,7,0,8],3)
+random_list  = split_list([1,2,3,4,5,6,7,0,8], 3)
+hand_ct = 30
 
 # ウィンドウ生成
 root = tk.Tk()
 root.title('8パズル')
-root.geometry('250x250')
-flame = tk.LabelFrame(root) # フレーム生成
-create_screen(random_list, flame, image = img) # フレームと配列を使ってスクリーンを生成
+root.geometry('800x600')
 
-flame.pack(side = 'top', pady = 40)
+flame = tk.LabelFrame(root) # フレーム生成
+hand_ct_flame = tk.LabelFrame(root) # フレーム生成
+
+hand_ct_label = tk.Label(hand_ct_flame, text = '残り手数:\n' + str(hand_ct))
+
+img_name_list = []
+for i in range(0,9):
+    img_name_list.append(tk.PhotoImage(file='image/{0}.png'.format(i)))
+
+create_screen(random_list, flame, img_name_list) # フレームと配列を使ってスクリーンを生成
+
+hand_ct_label.pack()
+hand_ct_flame.pack(side = 'left', padx = 50, pady = 10)
+flame.pack(side = 'top', pady = 10)
+
 root.mainloop()
