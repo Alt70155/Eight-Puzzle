@@ -29,7 +29,7 @@ def judge(e):
         zero_y, zero_x = search_index(0) # ゼロの座標を取得
         # ゼロと選択された数字を入れ替え
         random_list[y][x], random_list[zero_y][zero_x] = random_list[zero_y][zero_x], random_list[y][x]
-        create_screen(random_list, puzzle_flame, img_name_list) # 表示更新
+        create_screen(random_list, image_list, puzzle_flame) # 表示更新
         if random_list == correct_list:
             print('claer')
             close()
@@ -63,8 +63,6 @@ first_list   = [0 if i == 9 else i for i in range(1,10)]
 correct_list = split_list(first_list, 3) # 3分割
 # random_list  = split_list(random.sample(first_list, len(first_list)), 3)
 random_list  = split_list([1,2,3,4,5,6,7,0,8], 3) # デバッグ用
-# パズルに使う画像を読み込んで、それらを配列に格納
-image_list   = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), list(range(0,9))))
 hand_ct = 30
 
 root = tk.Tk() # ウィンドウ生成
@@ -75,10 +73,12 @@ puzzle_flame  = tk.LabelFrame(root) # フレーム生成
 hand_ct_flame = tk.LabelFrame(root) # フレーム生成
 hand_ct_label = tk.Label(hand_ct_flame, text = '残り手数:\n' + str(hand_ct))
 
+# パズルに使う画像を読み込んで、それらを配列に格納
+image_list   = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), list(range(0,9))))
 create_screen(random_list, image_list, puzzle_flame) # フレームと配列を使ってスクリーンを生成
 
 hand_ct_label.pack()
 hand_ct_flame.pack(side = 'left', padx = 50, pady = 10)
-puzzle_flame.pack(side = 'top',   pady = 10)
+puzzle_flame.pack(side  = 'top',  pady = 10)
 
 root.mainloop()
