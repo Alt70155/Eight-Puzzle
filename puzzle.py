@@ -1,5 +1,6 @@
 import tkinter as tk
 import random
+from time import sleep
 from tkinter import messagebox
 
 # 配列を二次元配列に分割する関数
@@ -18,7 +19,7 @@ def create_screen(list, image_list, puzzle_flame):
 
 # タイルが押されるとこの関数が実行される
 def judge(e):
-    global hand_ct
+    global hand_ct, timer_judge
 
     y, x = search_index(e.widget['text']) # クリックされた数字の座標を取得
 
@@ -39,15 +40,10 @@ def judge(e):
 def search_index(search_num):
     # index関数は検索した数字が無い場合例外が発生するため、
     # in演算子で存在を予め調べ、合った場合のみindex関数を使う
-    for i in range(0,3):
-        if search_num in random_list[i]:
+    for i, inner_ary in enumerate(random_list):
+        if search_num in inner_ary:
             # それぞれ二次元配列のy,x座標になる
-            return i, random_list[i].index(search_num)
-
-    map(lambda i: i, random_list)
-
-    # [i for i in range(0,3) if search_num in random_list[i]]
-    # [i for i in range(10) if i % 2 == 0]
+            return i, inner_ary.index(search_num)
 
 def is_exist_zero(y, x):
     for i in [-1, 1]:
@@ -68,22 +64,35 @@ first_list   = [0 if i == 9 else i for i in range(1,10)]
 correct_list = split_list(first_list, 3) # 3分割
 # random_list  = split_list(random.sample(first_list, len(first_list)), 3)
 random_list  = split_list([1,2,3,4,5,6,7,0,8], 3) # デバッグ用
-hand_ct = 3
+hand_ct = 30
+elapsed_time = 0
 
-root = tk.Tk() # ウィンドウ生成
+# root area
+root = tk.Tk()
 root.title('8パズル')
 root.geometry('800x600')
 
-puzzle_flame  = tk.LabelFrame(root) # フレーム生成
-hand_ct_flame = tk.LabelFrame(root) # フレーム生成
-hand_ct_label = tk.Label(hand_ct_flame, text = '残り手数:\n' + str(hand_ct))
+# flame area
+puzzle_flame       = tk.LabelFrame(root) # フレーム生成
+side_bar_flame     = tk.LabelFrame(root)
+hand_ct_flame      = tk.LabelFrame(side_bar_flame) # フレーム生成
+elapsed_time_flame = tk.LabelFrame(side_bar_flame) # フレーム生成
+
+# label area
+hand_ct_label      = tk.Label(hand_ct_flame,      text = '残り手数:\n' + str(hand_ct))
+elapsed_time_label = tk.Label(elapsed_time_flame, text = '経過時間:\n' + str(elapsed_time))
 
 # パズルに使う画像を読み込んで、それらを配列に格納
 image_list = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), list(range(0,9))))
 create_screen(random_list, image_list, puzzle_flame) # フレームと配列を使ってスクリーンを生成
 
+# pack area
 hand_ct_label.pack()
-hand_ct_flame.pack(side = 'left', padx = 50, pady = 10)
-puzzle_flame.pack(side  = 'top',  pady = 10)
+elapsed_time_label.pack()
+
+puzzle_flame.pack(side = 'right',  pady = 10, padx = 30)
+side_bar_flame.pack(side = 'left', padx = 50, pady = 10)
+hand_ct_flame.pack(padx = 10, pady = 10)
+elapsed_time_flame.pack(padx = 10, pady = 10)
 
 root.mainloop()
