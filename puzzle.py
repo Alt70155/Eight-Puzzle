@@ -23,6 +23,7 @@ def judge(e):
     y, x = search_index(e.widget['text']) # クリックされた数字の座標を取得
 
     if is_exist_zero(y, x): # 選択された数字の上下左右にゼロがあるか調べる
+
         hand_ct -= 1
         hand_ct_label.configure(text='残り手数:\n' + str(hand_ct))
 
@@ -30,19 +31,23 @@ def judge(e):
         # ゼロと選択された数字を入れ替え
         random_list[y][x], random_list[zero_y][zero_x] = random_list[zero_y][zero_x], random_list[y][x]
         create_screen(random_list, image_list, puzzle_flame) # 表示更新
-        if random_list == correct_list:
-            print('claer')
-            close()
-    else:
-        print('no change')
+
+        if random_list == correct_list: close('ゲームクリア！\n終了します')
+
+        elif hand_ct == 0: close('手数をオーバーしました！\n終了します')
 
 def search_index(search_num):
     # index関数は検索した数字が無い場合例外が発生するため、
     # in演算子で存在を予め調べ、合った場合のみindex関数を使う
     for i in range(0,3):
         if search_num in random_list[i]:
-            # それぞれ二次元配列のyとx座標になる
+            # それぞれ二次元配列のy,x座標になる
             return i, random_list[i].index(search_num)
+
+    map(lambda i: i, random_list)
+
+    # [i for i in range(0,3) if search_num in random_list[i]]
+    # [i for i in range(10) if i % 2 == 0]
 
 def is_exist_zero(y, x):
     for i in [-1, 1]:
@@ -53,8 +58,8 @@ def is_exist_zero(y, x):
             return True
     return False
 
-def close():
-    messagebox.showinfo('ゲームクリア', message='ゲームクリア！\n終了します')
+def close(msg):
+    messagebox.showinfo('インフォメーション', message = msg)
     root.destroy()
 
 
@@ -63,7 +68,7 @@ first_list   = [0 if i == 9 else i for i in range(1,10)]
 correct_list = split_list(first_list, 3) # 3分割
 # random_list  = split_list(random.sample(first_list, len(first_list)), 3)
 random_list  = split_list([1,2,3,4,5,6,7,0,8], 3) # デバッグ用
-hand_ct = 30
+hand_ct = 3
 
 root = tk.Tk() # ウィンドウ生成
 root.title('8パズル')
@@ -74,7 +79,7 @@ hand_ct_flame = tk.LabelFrame(root) # フレーム生成
 hand_ct_label = tk.Label(hand_ct_flame, text = '残り手数:\n' + str(hand_ct))
 
 # パズルに使う画像を読み込んで、それらを配列に格納
-image_list   = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), list(range(0,9))))
+image_list = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), list(range(0,9))))
 create_screen(random_list, image_list, puzzle_flame) # フレームと配列を使ってスクリーンを生成
 
 hand_ct_label.pack()
