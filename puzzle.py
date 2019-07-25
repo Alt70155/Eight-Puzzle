@@ -36,6 +36,14 @@ def judge(e):
 
         elif hand_ct == 0: close('手数をオーバーしました！\n終了します')
 
+def restart(e):
+    global random_list, hand_ct
+
+    hand_ct = 30
+    hand_ct_label.configure(text='残り手数:\n' + str(hand_ct))
+    random_list = split_list(tmp_list, 3)
+    create_screen(random_list, image_list, puzzle_flame)
+
 def search_index(search_num):
     # index関数は検索した数字が無い場合例外が発生するため、
     # in演算子で存在を予め調べ、合った場合のみindex関数を使う
@@ -45,6 +53,7 @@ def search_index(search_num):
             return i, inner_ary.index(search_num)
 
 def is_exist_zero(y, x):
+
     for i in [-1, 1]:
         yi, xi = y + i, x + i
         # ・配列の範囲内か・上下左右にゼロがあるかを調べる
@@ -61,14 +70,18 @@ def close(msg):
 first_list   = [0 if i == 9 else i for i in range(1, 10)]
 correct_list = split_list(first_list, 3) # 3分割
 # random_list  = split_list(random.sample(first_list, len(first_list)), 3)
-random_list  = split_list([1,2,3,4,5,6,7,0,8], 3) # デバッグ用
-hand_ct = 30
+tmp_list     = [1,2,3,4,5,6,7,0,8]
+random_list  = split_list(tmp_list, 3) # デバッグ用
+RESTART_LIST = split_list(tmp_list, 3)
+hand_ct      = 30
 elapsed_time = 0
 
 # root area
 root = tk.Tk()
 root.title('8パズル')
 root.geometry('1000x1000')
+# パズルに使う画像を読み込んで、それらを配列に格納
+image_list = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), list(range(0,9))))
 
 # ----- flame area -----
 puzzle_flame       = tk.LabelFrame(root)
@@ -82,18 +95,17 @@ restart_flame      = tk.LabelFrame(right_bar_flame)
 hand_ct_label      = tk.Label(hand_ct_flame,      text = '残り手数:\n' + str(hand_ct))
 elapsed_time_label = tk.Label(elapsed_time_flame, text = '経過時間:\n' + str(elapsed_time))
 
-# パズルに使う画像を読み込んで、それらを配列に格納
-image_list = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), list(range(0,9))))
 create_screen(random_list, image_list, puzzle_flame) # フレームと配列を使ってスクリーンを生成
 
 restart_button = tk.Button(restart_flame, text = 'やり直し')
-# restart_button.bind('<1>', restart)
+restart_button.bind('<1>', restart)
 
 # ----- pack area -----
 hand_ct_label.pack()
 elapsed_time_label.pack()
 restart_button.pack()
 
+# 書く順番によって表示が変わるので注意
 right_bar_flame.pack(side = 'right', padx = 40, pady = 10)
 left_bar_flame.pack(side = 'left',   padx = 50, pady = 10)
 puzzle_flame.pack(side = 'top',      padx = 30, pady = 40)

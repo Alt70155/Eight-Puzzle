@@ -1,8 +1,7 @@
-a = [1,2,3]
-b = []
+a = [
+    [1,2,3],
+    [4,5,6]
+]
+b = list(map(lambda i: i, a))
 
-for i in a:
-    b.append(i)
-
-b[0] = 10
-print(a)
+print(b)
