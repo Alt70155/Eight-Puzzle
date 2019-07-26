@@ -48,7 +48,12 @@ def restart(e='none', once_again=False):
     elapsed_time_label.configure(text='経過時間:\n0.0秒')
     hand_ct_label.configure(text='残り手数:\n' + str(hand_ct))
 
-    if once_again: restart_list = [1,2,3,4,5,6,0,7,8]
+    if once_again:
+        restart_list = [1,2,3,4,5,6,0,7,8]
+        result_list.append(round(elapsed_time, 2))
+        result_list.sort()
+        best_time_label.configure(text = 'ベストタイム:\n' + str(result_list[0]))
+
 
     random_list = split_list(restart_list, 3)
     create_screen(random_list, image_list, puzzle_flame)
@@ -94,6 +99,7 @@ correct_list   = split_list(first_list, 3) # 3分割
 # random_list  = split_list(random.sample(first_list, len(first_list)), 3)
 restart_list   = [1,2,3,4,0,6,7,5,8]
 random_list    = split_list(restart_list, 3) # デバッグ用
+result_list    = []
 HAND_COUNT_NUM = 30
 hand_ct        = HAND_COUNT_NUM
 is_first       = True
