@@ -40,14 +40,17 @@ def judge(e):
 
         elif hand_ct == 0: close('手数をオーバーしました！')
 
-def restart(e):
-    global random_list, hand_ct, is_first
+def restart(e='none', once_again=False):
+    global random_list, hand_ct, is_first, restart_list
 
-    hand_ct  = 30
+    hand_ct  = HAND_COUNT_NUM
     is_first = True
     elapsed_time_label.configure(text='経過時間:\n0.0秒')
     hand_ct_label.configure(text='残り手数:\n' + str(hand_ct))
-    random_list = split_list(tmp_list, 3)
+
+    if once_again: restart_list = [1,2,3,4,5,6,0,7,8]
+
+    random_list = split_list(restart_list, 3)
     create_screen(random_list, image_list, puzzle_flame)
 
 def search_index(search_num):
@@ -71,8 +74,7 @@ def is_exist_zero(y, x):
 def close(msg):
     ans = messagebox.askyesno('インフォメーション', message = msg + '\n\nもう一度やりますか？')
 
-    if ans:
-        root.destroy()
+    restart(once_again=True) if ans else root.destroy()
 
 
 def timer():
@@ -87,14 +89,14 @@ def timer():
 split_list   = lambda l, n: [l[idx:idx + n] for idx in range(0, len(l), n)]
 
 # 状態管理用配列作成
-first_list   = [0 if i == 9 else i for i in range(1, 10)]
-correct_list = split_list(first_list, 3) # 3分割
+first_list     = [0 if i == 9 else i for i in range(1, 10)]
+correct_list   = split_list(first_list, 3) # 3分割
 # random_list  = split_list(random.sample(first_list, len(first_list)), 3)
-tmp_list     = [1,2,3,4,5,6,7,0,8]
-random_list  = split_list(tmp_list, 3) # デバッグ用
-RESTART_LIST = split_list(tmp_list, 3)
-hand_ct      = 30
-is_first     = True
+restart_list   = [1,2,3,4,0,6,7,5,8]
+random_list    = split_list(restart_list, 3) # デバッグ用
+HAND_COUNT_NUM = 30
+hand_ct        = HAND_COUNT_NUM
+is_first       = True
 start_time, elapsed_time = 0, 0
 
 # root area
@@ -130,7 +132,6 @@ restart_button.bind('<1>', restart)
 exit_button.bind('<1>', lambda e: root.destroy())
 
 # ----- pack area -----
-
 # label pack
 hand_ct_label.pack()
 elapsed_time_label.pack()
