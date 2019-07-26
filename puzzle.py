@@ -36,9 +36,9 @@ def judge(e):
         random_list[y][x], random_list[zero_y][zero_x] = random_list[zero_y][zero_x], random_list[y][x]
         create_screen(random_list, image_list, puzzle_flame) # 表示更新
 
-        if random_list == correct_list: close('ゲームクリア！\n終了します')
+        if random_list == correct_list: close('ゲームクリア！')
 
-        elif hand_ct == 0: close('手数をオーバーしました！\n終了します')
+        elif hand_ct == 0: close('手数をオーバーしました！')
 
 def restart(e):
     global random_list, hand_ct, is_first
@@ -69,8 +69,10 @@ def is_exist_zero(y, x):
     return False
 
 def close(msg):
-    messagebox.showinfo('インフォメーション', message = msg)
-    root.destroy()
+    ans = messagebox.askyesno('インフォメーション', message = msg + '\n\nもう一度やりますか？')
+
+    if ans:
+        root.destroy()
 
 
 def timer():
@@ -104,33 +106,49 @@ image_list = list(map(lambda i: tk.PhotoImage(file='image/{0}.png'.format(i)), l
 
 # ----- flame area -----
 puzzle_flame       = tk.LabelFrame(root)
+# left bar
 left_bar_flame     = tk.LabelFrame(root)
 hand_ct_flame      = tk.LabelFrame(left_bar_flame)
 elapsed_time_flame = tk.LabelFrame(left_bar_flame)
+best_time_flame    = tk.LabelFrame(left_bar_flame)
+# right bar
 right_bar_flame    = tk.LabelFrame(root)
 restart_flame      = tk.LabelFrame(right_bar_flame)
+exit_flame         = tk.LabelFrame(right_bar_flame)
 
 # ----- label area -----
 hand_ct_label      = tk.Label(hand_ct_flame,      text = '残り手数:\n' + str(hand_ct))
 elapsed_time_label = tk.Label(elapsed_time_flame, text = '経過時間:\n0.0秒')
+best_time_label    = tk.Label(best_time_flame,    text = 'ベストタイム:\nnone')
 
 create_screen(random_list, image_list, puzzle_flame) # フレームと配列を使ってスクリーンを生成
 
+# ----- button area -----
 restart_button = tk.Button(restart_flame, text = 'やり直し')
+exit_button    = tk.Button(exit_flame,    text = '終了する')
 restart_button.bind('<1>', restart)
+exit_button.bind('<1>', lambda e: root.destroy())
 
 # ----- pack area -----
+
+# label pack
 hand_ct_label.pack()
 elapsed_time_label.pack()
+best_time_label.pack()
 restart_button.pack()
+exit_button.pack()
 
+# main flame pack
 # 書く順番によって表示が変わるので注意
 right_bar_flame.pack(side = 'right', padx = 40, pady = 10)
 left_bar_flame.pack(side = 'left',   padx = 50, pady = 10)
 puzzle_flame.pack(side = 'top',      padx = 30, pady = 40)
 
+# sub flame pack
 hand_ct_flame.pack(padx = 10, pady = 10)
 elapsed_time_flame.pack(padx = 10, pady = 10)
+best_time_flame.pack(padx = 10, pady = 10)
 restart_flame.pack(padx = 20, pady = 20)
+exit_flame.pack(padx = 20, pady = 20)
 
 root.mainloop()
