@@ -1,7 +1,5 @@
-a = [
-    [1,2,3],
-    [4,5,6]
-]
-b = list(map(lambda i: i, a))
+import time
 
-print(b)
+x, y = 0, 0
+
+print(x,y)

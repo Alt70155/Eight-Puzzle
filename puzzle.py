@@ -1,10 +1,8 @@
 import tkinter as tk
 import random
 from tkinter import messagebox
-
-# 配列を二次元配列に分割する関数
-# rangeの第三引数はstep, nは0,3,9となり、idx:idx+nは0~3,3~6,6~9となる
-split_list = lambda l, n: [l[idx:idx + n] for idx in range(0, len(l), n)]
+import time
+import threading
 
 def create_screen(list, image_list, puzzle_flame):
     ct = 0
@@ -18,9 +16,15 @@ def create_screen(list, image_list, puzzle_flame):
 
 # タイルが押されるとこの関数が実行される
 def judge(e):
-    global hand_ct
+    global hand_ct, is_first, start_time
 
     y, x = search_index(e.widget['text']) # クリックされた数字の座標を取得
+
+    if is_first:
+        start_time = time.time()
+        is_first   = False
+
+    timer()
 
     if is_exist_zero(y, x): # 選択された数字の上下左右にゼロがあるか調べる
 
@@ -37,9 +41,11 @@ def judge(e):
         elif hand_ct == 0: close('手数をオーバーしました！\n終了します')
 
 def restart(e):
-    global random_list, hand_ct
+    global random_list, hand_ct, is_first
 
-    hand_ct = 30
+    hand_ct  = 30
+    is_first = True
+    elapsed_time_label.configure(text='経過時間:\n0.0秒')
     hand_ct_label.configure(text='残り手数:\n' + str(hand_ct))
     random_list = split_list(tmp_list, 3)
     create_screen(random_list, image_list, puzzle_flame)
@@ -66,6 +72,18 @@ def close(msg):
     messagebox.showinfo('インフォメーション', message = msg)
     root.destroy()
 
+
+def timer():
+    global elapsed_time
+
+    elapsed_time = time.time() - start_time
+    elapsed_time_label.configure(text='経過時間:\n' + str(round(elapsed_time, 2)) + '秒')
+
+
+# 配列を二次元配列に分割する関数
+# rangeの第三引数はstep, nは0,3,9となり、idx:idx+nは0~3,3~6,6~9となる
+split_list   = lambda l, n: [l[idx:idx + n] for idx in range(0, len(l), n)]
+
 # 状態管理用配列作成
 first_list   = [0 if i == 9 else i for i in range(1, 10)]
 correct_list = split_list(first_list, 3) # 3分割
@@ -74,7 +92,8 @@ tmp_list     = [1,2,3,4,5,6,7,0,8]
 random_list  = split_list(tmp_list, 3) # デバッグ用
 RESTART_LIST = split_list(tmp_list, 3)
 hand_ct      = 30
-elapsed_time = 0
+is_first     = True
+start_time, elapsed_time = 0, 0
 
 # root area
 root = tk.Tk()
@@ -93,7 +112,7 @@ restart_flame      = tk.LabelFrame(right_bar_flame)
 
 # ----- label area -----
 hand_ct_label      = tk.Label(hand_ct_flame,      text = '残り手数:\n' + str(hand_ct))
-elapsed_time_label = tk.Label(elapsed_time_flame, text = '経過時間:\n' + str(elapsed_time))
+elapsed_time_label = tk.Label(elapsed_time_flame, text = '経過時間:\n0.0秒')
 
 create_screen(random_list, image_list, puzzle_flame) # フレームと配列を使ってスクリーンを生成
 
